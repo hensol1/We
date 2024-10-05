@@ -1,0 +1,71 @@
+# We Know Better - Football Prediction Web Application
+
+## Project Overview
+This is a web application that displays football matches, allows users to vote on match outcomes, and includes an admin panel for making official predictions. It consists of a React frontend and a Node.js/Express backend with MongoDB for data storage.
+
+## Frontend (React)
+Key Components:
+1. App.js: The main component that handles routing and overall app structure.
+2. MatchesDashboard.js: Displays matches grouped by leagues, handles voting functionality, and shows fan predictions.
+3. Auth.js: Manages user registration and login, including country selection.
+4. Profile.js: Displays user profile information and detailed voting history.
+5. AdminPanel.js: Allows admin users to make predictions for matches and reset all predictions.
+6. PredictionStats.js: Displays prediction accuracy statistics for users and admins.
+
+Key Features:
+- Fetches and displays matches for a specific date
+- Allows date navigation
+- Displays match details including teams, scores, and voting buttons
+- Shows voting percentages for each match
+- Implements user authentication (login/register) with country selection
+- Provides an admin panel for match predictions and resetting all predictions
+- Displays user profiles with voting history and accuracy
+- Shows overall prediction accuracy statistics for users and admins
+
+## Backend (Node.js/Express)
+Key Endpoints:
+- GET /api/matches: Fetches matches for a specific date
+- POST /api/vote: Handles user voting on matches
+- GET /api/match-votes/:matchId: Retrieves voting percentages for a specific match
+- POST /api/register: Handles user registration (including country)
+- POST /api/login: Handles user login
+- GET /api/profile: Retrieves user profile information
+- GET /api/admin/matches: Fetches matches for admin prediction (filtered by selected leagues)
+- POST /api/admin/predict: Handles admin match predictions
+- GET /api/match/:matchId: Retrieves details for a specific match
+- GET /api/prediction-stats: Retrieves prediction accuracy statistics
+- POST /api/admin/reset-predictions: Resets all user votes and admin predictions
+
+## Database (MongoDB)
+Collections:
+- users: Stores user information (username, hashed password, country, isAdmin flag, voting history)
+- matches: Stores match information (teams, scores, voting data, admin predictions)
+
+## Key Functionalities:
+1. User Registration and Login with Country Selection
+2. Admin user support
+3. Fetching and Displaying Matches (filtered by selected leagues)
+4. Voting on Match Outcomes
+5. Displaying Voting Percentages
+6. User Profile with Detailed Voting History
+7. Admin Panel for Match Predictions
+8. Date Navigation for Matches and Admin Panel
+9. Overall Prediction Accuracy Statistics
+10. Ability to Reset All Predictions and Votes (Admin only)
+
+## Recent Updates:
+1. Added country selection during user registration
+2. Implemented prediction accuracy statistics for users and admins
+3. Added functionality to reset all predictions and votes
+4. Updated the admin panel to include the reset feature
+5. Improved error handling and user feedback
+
+## Current State:
+The application is functional with basic and advanced features implemented. Users can register, login, view matches, vote on outcomes, and view their profile. Admins can make predictions, view all matches, and reset all predictions. The system calculates and displays prediction accuracy for both users and admins.
+
+## Next Steps:
+1. Implement more robust error handling
+2. Add more detailed statistics and data visualization
+3. Improve the user interface and experience
+4. Implement unit and integration tests
+5. Consider adding more features like user rankings or leagues
