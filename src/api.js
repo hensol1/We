@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5000/api';
+const API_URL = process.env.REACT_APP_API_URL || 'https://we-backend-lrmn.onrender.com/api';
 
 export const fetchMatches = async (date) => {
   try {
@@ -88,7 +88,6 @@ export const register = async (username, password, country) => {
   }
 };
 
-
 export const getUserProfile = async () => {
   try {
     const token = localStorage.getItem('token');
@@ -124,7 +123,6 @@ export const getMatchDetails = async (matchId) => {
     throw error;
   }
 };
-
 
 export const fetchAdminMatches = async (date) => {
   try {
@@ -197,10 +195,3 @@ export const resetPredictions = async () => {
     throw error;
   }
 };
-
-
-// Remove the duplicate declaration at the end of the file
-// export const getMatchVotes = async
-
-
-//export const getMatchVotes = async
