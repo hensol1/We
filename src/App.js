@@ -33,12 +33,12 @@ const App = () => {
     }
   };
 
-  const handleLogin = (userData) => {
-    setIsLoggedIn(true);
-    setShowAuth(false);
-    setUser(userData);
-    fetchUserProfile(); // Fetch full profile after login
-  };
+const handleLogin = (userData) => {
+  setIsLoggedIn(true);
+  setShowAuth(false);
+  setUser(userData);
+  fetchUserProfile();
+};
 
   const handleLogout = () => {
     localStorage.removeItem('token');

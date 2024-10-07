@@ -38,34 +38,32 @@ useEffect(() => {
       .catch(error => console.error('Error fetching countries:', error));
   }, []);
 
-  const handleGoogleSuccess = async (credentialResponse) => {
-        console.log('Google login success:', credentialResponse);
-          console.log('Google credential response:', credentialResponse);
-    try {
-      console.log('Google credential response:', credentialResponse);
-      const result = await fetch(`${process.env.REACT_APP_API_URL}/auth/google/token`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ token: credentialResponse.credential }),
-      });
-      const data = await result.json();
-      console.log('Backend response:', data);
-      if (data.needsUsername || data.needsCountry) {
-        setShowUserInfoForm(true);
-        setGoogleUserId(data.userId);
-      } else {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('userId', data.userId);
-        onLogin({ username: data.username || data.email, userId: data.userId });
-      }
-    } catch (error) {
-      console.error('Google login error:', error);
-      setError(`Failed to login with Google. ${error.message}`);
+const handleGoogleSuccess = async (credentialResponse) => {
+  console.log('Google login success:', credentialResponse);
+  try {
+    const result = await fetch(`${process.env.REACT_APP_API_URL}/auth/google/token`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ token: credentialResponse.credential }),
+    });
+    const data = await result.json();
+    console.log('Backend response:', data);
+    if (data.needsUsername || data.needsCountry) {
+      setShowUserInfoForm(true);
+      setGoogleUserId(data.userId);
+    } else {
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('userId', data.userId);
+      onLogin({ username: data.username, userId: data.userId });
     }
-  };
-
+  } catch (error) {
+    console.error('Google login error:', error);
+    setError(`Failed to login with Google. ${error.message}`);
+  }
+};
+  
   const handleUserInfoSubmit = async (e) => {
     e.preventDefault();
     if (!username || !country) {
