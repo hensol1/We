@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { format, addDays, subDays } from 'date-fns'
-import { fetchMatches, submitVote, getMatchVotes } from '../api';
+import { fetchMatches, submitVote, getMatchVotes, getUserVotesAndPercentages } from '../api';
 
 const MatchesDashboard = ({ isLoggedIn }) => {
   const [matches, setMatches] = useState([]);
@@ -9,61 +9,73 @@ const MatchesDashboard = ({ isLoggedIn }) => {
 
   useEffect(() => {
     fetchMatchesData(currentDate);
-  }, [currentDate]);
-
-const renderPredictions = (match) => {
-  const isFinished = match.status === "FINISHED";
-  let actualResult = null;
-  
-  if (isFinished) {
-    const homeScore = match.score.fullTime.home;
-    const awayScore = match.score.fullTime.away;
-    if (homeScore > awayScore) {
-      actualResult = match.homeTeam.name;
-    } else if (awayScore > homeScore) {
-      actualResult = match.awayTeam.name;
-    } else {
-      actualResult = "Draw";
+    if (isLoggedIn) {
+      fetchUserVotesAndPercentages();
     }
-  }
+  }, [currentDate, isLoggedIn]);
 
-  const fansPredictionCorrect = isFinished && 
-    ((match.fansPrediction?.team === match.homeTeam.name && actualResult === match.homeTeam.name) ||
-     (match.fansPrediction?.team === match.awayTeam.name && actualResult === match.awayTeam.name) ||
-     (match.fansPrediction?.team === "Draw" && actualResult === "Draw"));
+  const fetchUserVotesAndPercentages = async () => {
+    try {
+      const data = await getUserVotesAndPercentages();
+      setVotedMatches(data);
+    } catch (error) {
+      console.error('Error fetching user votes and percentages:', error);
+    }
+  };
 
-  const adminPredictionCorrect = isFinished && 
-    ((match.adminPrediction?.team === match.homeTeam.name && actualResult === match.homeTeam.name) ||
-     (match.adminPrediction?.team === match.awayTeam.name && actualResult === match.awayTeam.name) ||
-     (match.adminPrediction?.team === "Draw" && actualResult === "Draw"));
+  const renderPredictions = (match) => {
+    const isFinished = match.status === "FINISHED";
+    let actualResult = null;
+    
+    if (isFinished) {
+      const homeScore = match.score.fullTime.home;
+      const awayScore = match.score.fullTime.away;
+      if (homeScore > awayScore) {
+        actualResult = match.homeTeam.name;
+      } else if (awayScore > homeScore) {
+        actualResult = match.awayTeam.name;
+      } else {
+        actualResult = "Draw";
+      }
+    }
 
-  return (
-    <div className="text-sm text-gray-600 mt-1 flex justify-between">
-      <div className={`${isFinished ? (fansPredictionCorrect ? 'bg-green-200' : 'bg-red-200') : ''} px-2 py-1 rounded`}>
-        Fans Prediction: 
-        {match.fansPrediction?.logo && (
-          <img 
-            src={match.fansPrediction.logo} 
-            alt={match.fansPrediction.team} 
-            className="w-4 h-4 inline mx-1"
-          />
-        )}
-        {match.fansPrediction?.team}
+    const fansPredictionCorrect = isFinished && 
+      ((match.fansPrediction?.team === match.homeTeam.name && actualResult === match.homeTeam.name) ||
+       (match.fansPrediction?.team === match.awayTeam.name && actualResult === match.awayTeam.name) ||
+       (match.fansPrediction?.team === "Draw" && actualResult === "Draw"));
+
+    const adminPredictionCorrect = isFinished && 
+      ((match.adminPrediction?.team === match.homeTeam.name && actualResult === match.homeTeam.name) ||
+       (match.adminPrediction?.team === match.awayTeam.name && actualResult === match.awayTeam.name) ||
+       (match.adminPrediction?.team === "Draw" && actualResult === "Draw"));
+
+    return (
+      <div className="text-sm text-gray-600 mt-1 flex justify-between">
+        <div className={`${isFinished ? (fansPredictionCorrect ? 'bg-green-200' : 'bg-red-200') : ''} px-2 py-1 rounded`}>
+          Fans Prediction: 
+          {match.fansPrediction?.logo && (
+            <img 
+              src={match.fansPrediction.logo} 
+              alt={match.fansPrediction.team} 
+              className="w-4 h-4 inline mx-1"
+            />
+          )}
+          {match.fansPrediction?.team}
+        </div>
+        <div className={`${isFinished ? (adminPredictionCorrect ? 'bg-green-200' : 'bg-red-200') : ''} px-2 py-1 rounded`}>
+          AI Prediction: 
+          {match.adminPrediction?.logo && (
+            <img 
+              src={match.adminPrediction.logo} 
+              alt={match.adminPrediction.team} 
+              className="w-4 h-4 inline mx-1"
+            />
+          )}
+          {match.adminPrediction?.team}
+        </div>
       </div>
-      <div className={`${isFinished ? (adminPredictionCorrect ? 'bg-green-200' : 'bg-red-200') : ''} px-2 py-1 rounded`}>
-        AI Prediction: 
-        {match.adminPrediction?.logo && (
-          <img 
-            src={match.adminPrediction.logo} 
-            alt={match.adminPrediction.team} 
-            className="w-4 h-4 inline mx-1"
-          />
-        )}
-        {match.adminPrediction?.team}
-      </div>
-    </div>
-  );
-};
+    );
+  };
 
   const fetchMatchesData = async (date) => {
     try {
@@ -75,7 +87,7 @@ const renderPredictions = (match) => {
       // Fetch vote percentages for each match
       const matchesWithVotes = await Promise.all(data.map(async (match) => {
         const votePercentages = await getMatchVotes(match.id);
-              console.log('Match with admin prediction:', match.adminPrediction);
+        console.log('Match with admin prediction:', match.adminPrediction);
         return { ...match, votePercentages };
       }));
 
@@ -99,7 +111,7 @@ const renderPredictions = (match) => {
       setMatches(matches.map(match => 
         match.id === matchId ? { ...match, votePercentages: percentages } : match
       ));
-      setVotedMatches({ ...votedMatches, [matchId]: true });
+      setVotedMatches({ ...votedMatches, [matchId]: { userVote: vote, percentages } });
     } catch (error) {
       console.error('Error submitting vote:', error);
       alert(error.message);
@@ -121,17 +133,18 @@ const renderPredictions = (match) => {
   };
 
   const VoteButton = ({ match, vote, onClick, showPercentage }) => {
-    const percentage = match.votePercentages?.[vote] || 0;
+    const percentage = votedMatches[match.id]?.percentages?.[vote] || match.votePercentages?.[vote] || 0;
     const isVoted = votedMatches[match.id];
+    const userVote = votedMatches[match.id]?.userVote;
     const bgColor = vote === 'HOME' ? 'bg-blue-500' : vote === 'DRAW' ? 'bg-gray-500' : 'bg-red-500';
     
     return (
       <button 
         onClick={onClick} 
         disabled={isVoted}
-        className={`px-2 py-1 ${bgColor} text-white rounded text-sm ${isVoted ? 'opacity-50 cursor-not-allowed' : ''}`}
+        className={`px-2 py-1 ${bgColor} text-white rounded text-sm ${isVoted ? 'opacity-50 cursor-not-allowed' : ''} ${userVote === vote ? 'ring-2 ring-yellow-400' : ''}`}
       >
-        {vote} {showPercentage ? `(${percentage}%)` : ''}
+        {vote} {(showPercentage || isVoted) ? `(${percentage}%)` : ''}
       </button>
     );
   };
