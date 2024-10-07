@@ -239,7 +239,6 @@ useEffect(() => {
 <div className="mt-4">
   {console.log("Rendering GoogleLogin component")}
   <GoogleLogin
-    clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
     onSuccess={handleGoogleSuccess}
     onError={(error) => {
       console.log('Google Login Failed:', error);

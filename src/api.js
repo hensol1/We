@@ -197,3 +197,21 @@ export const resetPredictions = async () => {
   }
 };
 
+export const getUserVotesAndPercentages = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}/user-votes`, {
+      headers: {
+        'Authorization': token,
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch user votes and percentages');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching user votes and percentages:', error);
+    throw error;
+  }
+};
+
