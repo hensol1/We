@@ -23,59 +23,59 @@ const MatchesDashboard = ({ isLoggedIn }) => {
     }
   };
 
-  const renderPredictions = (match) => {
-    const isFinished = match.status === "FINISHED";
-    let actualResult = null;
-    
-    if (isFinished) {
-      const homeScore = match.score.fullTime.home;
-      const awayScore = match.score.fullTime.away;
-      if (homeScore > awayScore) {
-        actualResult = match.homeTeam.name;
-      } else if (awayScore > homeScore) {
-        actualResult = match.awayTeam.name;
-      } else {
-        actualResult = "Draw";
-      }
+const renderPredictions = (match) => {
+  const isFinished = match.status === "FINISHED";
+  let actualResult = null;
+  
+  if (isFinished) {
+    const homeScore = match.score.fullTime.home;
+    const awayScore = match.score.fullTime.away;
+    if (homeScore > awayScore) {
+      actualResult = match.homeTeam.name;
+    } else if (awayScore > homeScore) {
+      actualResult = match.awayTeam.name;
+    } else {
+      actualResult = "Draw";
     }
+  }
 
-    const fansPredictionCorrect = isFinished && 
-      ((match.fansPrediction?.team === match.homeTeam.name && actualResult === match.homeTeam.name) ||
-       (match.fansPrediction?.team === match.awayTeam.name && actualResult === match.awayTeam.name) ||
-       (match.fansPrediction?.team === "Draw" && actualResult === "Draw"));
+  const fansPredictionCorrect = isFinished && 
+    ((match.fansPrediction?.team === match.homeTeam.name && actualResult === match.homeTeam.name) ||
+     (match.fansPrediction?.team === match.awayTeam.name && actualResult === match.awayTeam.name) ||
+     (match.fansPrediction?.team === "Draw" && actualResult === "Draw"));
 
-    const adminPredictionCorrect = isFinished && 
-      ((match.adminPrediction?.team === match.homeTeam.name && actualResult === match.homeTeam.name) ||
-       (match.adminPrediction?.team === match.awayTeam.name && actualResult === match.awayTeam.name) ||
-       (match.adminPrediction?.team === "Draw" && actualResult === "Draw"));
+  const adminPredictionCorrect = isFinished && 
+    ((match.adminPrediction?.team === match.homeTeam.name && actualResult === match.homeTeam.name) ||
+     (match.adminPrediction?.team === match.awayTeam.name && actualResult === match.awayTeam.name) ||
+     (match.adminPrediction?.team === "Draw" && actualResult === "Draw"));
 
-    return (
-      <div className="text-sm text-gray-600 mt-1 flex justify-between">
-        <div className={`${isFinished ? (fansPredictionCorrect ? 'bg-green-200' : 'bg-red-200') : ''} px-2 py-1 rounded`}>
-          Fans Prediction: 
-          {match.fansPrediction?.logo && (
-            <img 
-              src={match.fansPrediction.logo} 
-              alt={match.fansPrediction.team} 
-              className="w-4 h-4 inline mx-1"
-            />
-          )}
-          {match.fansPrediction?.team}
-        </div>
-        <div className={`${isFinished ? (adminPredictionCorrect ? 'bg-green-200' : 'bg-red-200') : ''} px-2 py-1 rounded`}>
-          AI Prediction: 
-          {match.adminPrediction?.logo && (
-            <img 
-              src={match.adminPrediction.logo} 
-              alt={match.adminPrediction.team} 
-              className="w-4 h-4 inline mx-1"
-            />
-          )}
-          {match.adminPrediction?.team}
-        </div>
+  return (
+    <div className="text-sm text-gray-600 mt-1 flex justify-between">
+      <div className={`${isFinished ? (fansPredictionCorrect ? 'bg-green-200' : 'bg-red-200') : ''} px-2 py-1 rounded`}>
+        Fans Prediction: 
+        {match.fansPrediction?.logo && (
+          <img 
+            src={match.fansPrediction.logo} 
+            alt={match.fansPrediction.team} 
+            className="w-4 h-4 inline mx-1"
+          />
+        )}
+        {match.fansPrediction?.team}
       </div>
-    );
-  };
+      <div className={`${isFinished ? (adminPredictionCorrect ? 'bg-green-200' : 'bg-red-200') : ''} px-2 py-1 rounded`}>
+        AI Prediction: 
+        {match.adminPrediction?.logo && (
+          <img 
+            src={match.adminPrediction.logo} 
+            alt={match.adminPrediction.team} 
+            className="w-4 h-4 inline mx-1"
+          />
+        )}
+        {match.adminPrediction?.team}
+      </div>
+    </div>
+  );
+};
 
   const fetchMatchesData = async (date) => {
     try {
@@ -87,7 +87,7 @@ const MatchesDashboard = ({ isLoggedIn }) => {
       // Fetch vote percentages for each match
       const matchesWithVotes = await Promise.all(data.map(async (match) => {
         const votePercentages = await getMatchVotes(match.id);
-        console.log('Match with admin prediction:', match.adminPrediction);
+              console.log('Match with admin prediction:', match.adminPrediction);
         return { ...match, votePercentages };
       }));
 
@@ -111,7 +111,7 @@ const MatchesDashboard = ({ isLoggedIn }) => {
       setMatches(matches.map(match => 
         match.id === matchId ? { ...match, votePercentages: percentages } : match
       ));
-      setVotedMatches({ ...votedMatches, [matchId]: { userVote: vote, percentages } });
+      setVotedMatches({ ...votedMatches, [matchId]: true });
     } catch (error) {
       console.error('Error submitting vote:', error);
       alert(error.message);
@@ -135,14 +135,13 @@ const MatchesDashboard = ({ isLoggedIn }) => {
   const VoteButton = ({ match, vote, onClick, showPercentage }) => {
     const percentage = votedMatches[match.id]?.percentages?.[vote] || match.votePercentages?.[vote] || 0;
     const isVoted = votedMatches[match.id];
-    const userVote = votedMatches[match.id]?.userVote;
     const bgColor = vote === 'HOME' ? 'bg-blue-500' : vote === 'DRAW' ? 'bg-gray-500' : 'bg-red-500';
     
     return (
       <button 
         onClick={onClick} 
         disabled={isVoted}
-        className={`px-2 py-1 ${bgColor} text-white rounded text-sm ${isVoted ? 'opacity-50 cursor-not-allowed' : ''} ${userVote === vote ? 'ring-2 ring-yellow-400' : ''}`}
+        className={`px-2 py-1 ${bgColor} text-white rounded text-sm ${isVoted ? 'opacity-50 cursor-not-allowed' : ''}`}
       >
         {vote} {(showPercentage || isVoted) ? `(${percentage}%)` : ''}
       </button>
