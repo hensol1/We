@@ -195,8 +195,5 @@ export const resetPredictions = async () => {
     console.error('Error resetting predictions:', error);
     throw error;
   }
-<<<<<<< HEAD
 };
-=======
-};
->>>>>>> eefa5d54314805b6470010a9e53658bd83489ea2
+
