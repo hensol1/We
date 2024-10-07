@@ -1,10 +1,10 @@
-const API_URL = process.env.REACT_APP_API_URL || 'https://we-backend-lrmn.onrender.com/api';
+const API_URL = process.env.REACT_APP_API_URL || 'https://we-backend-lrmn.onrender.com';
 
 export const fetchMatches = async (date) => {
   try {
     const response = await fetch(`${API_URL}/matches?date=${date}`);
     if (!response.ok) {
-      throw new Error('Network response was not ok');
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
     return await response.json();
   } catch (error) {
@@ -12,6 +12,7 @@ export const fetchMatches = async (date) => {
     throw error;
   }
 };
+
 
 export const submitVote = async (matchId, vote) => {
   try {
