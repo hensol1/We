@@ -13,6 +13,59 @@ export const fetchMatches = async (date) => {
   }
 };
 
+export const submitVote = async (matchId, vote) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}/vote`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token,
+      },
+      body: JSON.stringify({ matchId, vote }),
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Error submitting vote');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error submitting vote:', error);
+    throw error;
+  }
+};
+
+export const getMatchVotes = async (matchId) => {
+  try {
+    const response = await fetch(`${API_URL}/match-votes/${matchId}`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching match votes:', error);
+    throw error;
+  }
+};
+
+export const getUserVotesAndPercentages = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}/user-votes`, {
+      headers: {
+        'Authorization': token,
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch user votes and percentages');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching user votes and percentages:', error);
+    throw error;
+  }
+};
+
 export const register = async (username, password, email, country) => {
   try {
     const response = await fetch(`${API_URL}/register`, {
@@ -113,7 +166,6 @@ export const getUserProfile = async () => {
   }
 };
 
-
 export const getMatchDetails = async (matchId) => {
   try {
     const token = localStorage.getItem('token');
@@ -171,20 +223,6 @@ export const submitAdminPrediction = async (matchId, prediction) => {
   }
 };
 
-export const getMatchVotes = async (matchId) => {
-  try {
-    const response = await fetch(`${API_URL}/match-votes/${matchId}`);
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching match votes:', error);
-    throw error;
-  }
-};
-
-
 export const getPredictionStats = async () => {
   try {
     const response = await fetch(`${API_URL}/prediction-stats`);
@@ -214,24 +252,6 @@ export const resetPredictions = async () => {
     return await response.json();
   } catch (error) {
     console.error('Error resetting predictions:', error);
-    throw error;
-  }
-};
-
-export const getUserVotesAndPercentages = async () => {
-  try {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${API_URL}/user-votes`, {
-      headers: {
-        'Authorization': token,
-      },
-    });
-    if (!response.ok) {
-      throw new Error('Failed to fetch user votes and percentages');
-    }
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching user votes and percentages:', error);
     throw error;
   }
 };
