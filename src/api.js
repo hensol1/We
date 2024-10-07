@@ -1,5 +1,18 @@
 const API_URL = `${process.env.REACT_APP_API_URL}/api`;
 
+export const fetchMatches = async (date) => {
+  try {
+    const response = await fetch(`${API_URL}/matches?date=${date}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching matches:', error);
+    throw error;
+  }
+};
+
 export const register = async (username, password, email, country) => {
   try {
     const response = await fetch(`${API_URL}/register`, {
