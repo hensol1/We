@@ -1,4 +1,4 @@
-const API_URL = process.env.REACT_APP_API_URL || 'https://we-backend-lrmn.onrender.com';
+const API_URL = `${process.env.REACT_APP_API_URL}/api`;
 
 export const fetchMatches = async (date) => {
   try {
