@@ -236,16 +236,18 @@ useEffect(() => {
               {isLogin ? 'Login' : 'Register'}
             </button>
           </form>
-          <div className="mt-4">
-           {console.log("Rendering GoogleLogin component")}
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={() => {
-                console.log('Login Failed');
-                setError('Failed to login with Google. Please try again.');
-              }}
-            />
-          </div>
+<div className="mt-4">
+  {console.log("Rendering GoogleLogin component")}
+  <GoogleLogin
+    clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+    onSuccess={handleGoogleSuccess}
+    onError={(error) => {
+      console.log('Google Login Failed:', error);
+      setError('Failed to login with Google. Please try again.');
+    }}
+  />
+</div>
+
           <p className="mt-4 text-center">
             {isLogin ? "Don't have an account? " : "Already have an account? "}
             <button onClick={() => setIsLogin(!isLogin)} className="text-blue-500">
