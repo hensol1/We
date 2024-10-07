@@ -15,6 +15,11 @@ const Auth = ({ onLogin }) => {
   const [countries, setCountries] = useState([]);
   const [showUserInfoForm, setShowUserInfoForm] = useState(false);
   const [googleUserId, setGoogleUserId] = useState(null);
+    
+      useEffect(() => {
+    console.log("Auth component mounted");
+    console.log("Google Client ID:", process.env.REACT_APP_GOOGLE_CLIENT_ID);
+
 
   useEffect(() => {
     fetch('https://restcountries.com/v3.1/all')
@@ -33,6 +38,7 @@ const Auth = ({ onLogin }) => {
   }, []);
 
   const handleGoogleSuccess = async (credentialResponse) => {
+          console.log('Google credential response:', credentialResponse);
     try {
       console.log('Google credential response:', credentialResponse);
       const result = await fetch(`${process.env.REACT_APP_API_URL}/auth/google/token`, {
@@ -139,6 +145,7 @@ const Auth = ({ onLogin }) => {
 
   return (
     <div className="max-w-md mx-auto mt-8">
+          <h1>Authentication Component</h1>
       {showUserInfoForm ? (
         <form onSubmit={handleUserInfoSubmit} className="space-y-4">
           <h2 className="text-2xl font-bold mb-4">Complete Your Profile</h2>
@@ -228,6 +235,7 @@ const Auth = ({ onLogin }) => {
             </button>
           </form>
           <div className="mt-4">
+           {console.log("Rendering GoogleLogin component")}
             <GoogleLogin
               onSuccess={handleGoogleSuccess}
               onError={() => {
