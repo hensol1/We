@@ -30,19 +30,20 @@ const App = () => {
       setIsAdmin(profile.isAdmin);
     } catch (error) {
       console.error('Error fetching user profile:', error);
+      handleLogout();
     }
   };
 
-const handleLogin = (userData) => {
-  setIsLoggedIn(true);
-  setShowAuth(false);
-  setUser(userData);
-  fetchUserProfile();
-};
+  const handleLogin = (userData) => {
+    localStorage.setItem('token', userData.token);
+    setIsLoggedIn(true);
+    setShowAuth(false);
+    setUser({ username: userData.username });
+    fetchUserProfile();
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('userId');
     setIsLoggedIn(false);
     setShowProfile(false);
     setShowAdminPanel(false);

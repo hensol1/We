@@ -1,50 +1,21 @@
 const API_URL = `${process.env.REACT_APP_API_URL}/api`;
 
-export const fetchMatches = async (date) => {
+export const register = async (username, password, email, country) => {
   try {
-    const response = await fetch(`${API_URL}/matches?date=${date}`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching matches:', error);
-    throw error;
-  }
-};
-
-
-export const submitVote = async (matchId, vote) => {
-  try {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${API_URL}/vote`, {
+    const response = await fetch(`${API_URL}/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': token,
       },
-      body: JSON.stringify({ matchId, vote }),
+      body: JSON.stringify({ username, password, email, country }),
     });
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || 'Error submitting vote');
+      throw new Error(errorData.message || 'Registration failed');
     }
     return await response.json();
   } catch (error) {
-    console.error('Error submitting vote:', error);
-    throw error;
-  }
-};
-
-export const getMatchVotes = async (matchId) => {
-  try {
-    const response = await fetch(`${API_URL}/match-votes/${matchId}`);
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching match votes:', error);
+    console.error('Error registering:', error);
     throw error;
   }
 };
@@ -69,22 +40,44 @@ export const login = async (username, password) => {
   }
 };
 
-export const register = async (username, password, country) => {
+export const googleAuth = async (token) => {
   try {
-    const response = await fetch(`${API_URL}/register`, {
+    const response = await fetch(`${API_URL}/auth/google`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ username, password, country }),
+      body: JSON.stringify({ token }),
     });
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || 'Registration failed');
+      throw new Error(errorData.message || 'Google authentication failed');
     }
     return await response.json();
   } catch (error) {
-    console.error('Error registering:', error);
+    console.error('Error with Google authentication:', error);
+    throw error;
+  }
+};
+
+export const updateGoogleUser = async (username, country) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}/update-google-user`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token,
+      },
+      body: JSON.stringify({ username, country }),
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to update user info');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error updating Google user info:', error);
     throw error;
   }
 };
