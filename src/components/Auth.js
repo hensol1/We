@@ -16,9 +16,10 @@ const Auth = ({ onLogin }) => {
   const [showUserInfoForm, setShowUserInfoForm] = useState(false);
   const [googleUserId, setGoogleUserId] = useState(null);
     
-      useEffect(() => {
-    console.log("Auth component mounted");
-    console.log("Google Client ID:", process.env.REACT_APP_GOOGLE_CLIENT_ID);
+useEffect(() => {
+  console.log('Auth component mounted');
+  console.log('Google Client ID:', process.env.REACT_APP_GOOGLE_CLIENT_ID);
+}, []);
 
 
   useEffect(() => {
@@ -38,6 +39,7 @@ const Auth = ({ onLogin }) => {
   }, []);
 
   const handleGoogleSuccess = async (credentialResponse) => {
+        console.log('Google login success:', credentialResponse);
           console.log('Google credential response:', credentialResponse);
     try {
       console.log('Google credential response:', credentialResponse);
