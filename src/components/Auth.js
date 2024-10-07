@@ -50,19 +50,19 @@ const Auth = ({ onLogin }) => {
     }
   };
 
-  const handleGoogleSuccess = async (credentialResponse) => {
-    try {
-      const data = await googleAuth(credentialResponse.credential);
-      if (data.needsAdditionalInfo) {
-        setShowGoogleUserForm(true);
-      } else {
-        onLogin(data);
-      }
-    } catch (error) {
-      setError('Failed to login with Google');
+const handleGoogleSuccess = async (credentialResponse) => {
+  try {
+    const data = await googleAuth(credentialResponse.credential);
+    if (data.needsAdditionalInfo) {
+      setShowGoogleUserForm(true);
+    } else {
+      onLogin(data);
     }
-  };
-
+  } catch (error) {
+    console.error('Failed to login with Google:', error);
+    setError('Failed to login with Google. Please try again.');
+  }
+};
   const handleGoogleUserSubmit = async (e) => {
     e.preventDefault();
     if (!username || !country) {
