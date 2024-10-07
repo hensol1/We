@@ -113,6 +113,7 @@ export const getUserProfile = async () => {
   }
 };
 
+
 export const getMatchDetails = async (matchId) => {
   try {
     const token = localStorage.getItem('token');
@@ -169,6 +170,20 @@ export const submitAdminPrediction = async (matchId, prediction) => {
     throw error;
   }
 };
+
+export const getMatchVotes = async (matchId) => {
+  try {
+    const response = await fetch(`${API_URL}/match-votes/${matchId}`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching match votes:', error);
+    throw error;
+  }
+};
+
 
 export const getPredictionStats = async () => {
   try {
